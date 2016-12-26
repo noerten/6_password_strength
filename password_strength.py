@@ -11,33 +11,61 @@ def load_password_blacklist(filepath):
     return password_blacklist
 
 
-def get_password_strength(password):
-    if len(password) < 6:
+def get_length_strength(password):
+    length_strength = 0
+    for i in range(0, 17, 4):
+        if len(password) > i:
+            length_strength += 1
+    return length_strength
+
+
+def get_case_strength(password):
+    if (password.lower() or password.upper()) != password:
         return 1
     else:
-        password_strength = 1
-        if len(password) > 9:  
-            password_strength += 1
-        if len(password) > 12:  
-            password_strength += 1
-        if len(password) > 15:  
-            password_strength += 1
-        if (password.lower() or password.upper()) != password: 
-            password_strength += 1
-        if password not in load_password_blacklist(filepath):
-            password_strength += 2
-        if re.findall(r'[\d]', password): 
-            password_strength += 1
-        if re.findall(r'[!@#$%^&*-=+}{]', password):
-            password_strength += 1
-        previous = ''
-        for symbol in password:
-            if symbol == previous:
-                return password_strength
-            else:
-                previous = symbol
-        password_strength += 1
-        return password_strength
+        return 0
+
+
+def get_blacklist_strength(password):
+    if password not in load_password_blacklist(filepath):
+        return 1
+    else:
+        return 0
+
+
+def get_digital_strength(password):
+    if re.findall(r'[\d]', password):
+        return 1
+    else:
+        return 0
+
+
+def get_special_symbol_strength(password):
+    if re.findall(r'[!@#$%^&*-=+}{]', password):
+        return 1
+    else:
+        return 0
+
+
+def get_repeating_strength(password):
+    previous = ''
+    for symbol in password:
+        if symbol == previous:
+            return 0
+        else:
+            previous = symbol
+    return 1
+
+
+def get_password_strength(password):
+    length_strength = get_length_strength(password)
+    case_strength = get_case_strength(password)
+    blacklist_strength = get_blacklist_strength(password)
+    digital_strength = get_digital_strength(password)
+    special_symbol_strength = get_special_symbol_strength(password)
+    repeating_strength = get_repeating_strength(password)
+    return sum([length_strength, case_strength, blacklist_strength,
+               digital_strength, special_symbol_strength, repeating_strength])
 
 
 if __name__ == '__main__':
