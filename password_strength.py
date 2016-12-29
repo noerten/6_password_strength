@@ -20,31 +20,19 @@ def get_length_strength(password):
 
 
 def get_case_strength(password):
-    if (password.lower() or password.upper()) != password:
-        return 1
-    else:
-        return 0
+    return bool((password.lower() or password.upper()) != password)
 
 
 def get_blacklist_strength(password):
-    if password not in load_password_blacklist(filepath):
-        return 1
-    else:
-        return 0
+    return bool(password not in load_password_blacklist(filepath))
 
 
 def get_digital_strength(password):
-    if re.findall(r'[\d]', password):
-        return 1
-    else:
-        return 0
+    return bool(re.findall(r'[\d]', password))
 
 
 def get_special_symbol_strength(password):
-    if re.findall(r'[!@#$%^&*-=+}{]', password):
-        return 1
-    else:
-        return 0
+    return bool(re.findall(r'[!@#$%^&*-=+}{]', password))
 
 
 def get_repeating_strength(password):
